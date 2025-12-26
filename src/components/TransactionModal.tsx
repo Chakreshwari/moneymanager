@@ -3,6 +3,7 @@ import { X } from 'lucide-react';
 import type { Transaction, TransactionType } from '../types';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../context/AuthContext';
 
 interface TransactionModalProps {
     isOpen: boolean;
@@ -13,7 +14,9 @@ interface TransactionModalProps {
 }
 
 export function TransactionModal({ isOpen, onClose, onSubmit, initialData, title }: TransactionModalProps) {
+    const { user } = useAuth();
     const [formData, setFormData] = useState<Omit<Transaction, 'id'>>({
+        userId: user?.id || '',
         title: '',
         amount: 0,
         category: '',
@@ -24,6 +27,7 @@ export function TransactionModal({ isOpen, onClose, onSubmit, initialData, title
     useEffect(() => {
         if (initialData) {
             setFormData({
+                userId: initialData.userId,
                 title: initialData.title,
                 amount: initialData.amount,
                 category: initialData.category,
@@ -32,6 +36,7 @@ export function TransactionModal({ isOpen, onClose, onSubmit, initialData, title
             });
         } else {
             setFormData({
+                userId: user?.id || '',
                 title: '',
                 amount: 0,
                 category: '',
@@ -39,7 +44,7 @@ export function TransactionModal({ isOpen, onClose, onSubmit, initialData, title
                 type: 'expense'
             });
         }
-    }, [initialData, isOpen]);
+    }, [initialData, isOpen, user]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
