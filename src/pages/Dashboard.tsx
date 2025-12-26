@@ -37,7 +37,7 @@ export function Dashboard() {
                 variants={container}
                 initial="hidden"
                 animate="show"
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6"
             >
                 {stats.map((stat) => (
                     <motion.div key={stat.label} variants={item}>
@@ -48,7 +48,7 @@ export function Dashboard() {
                                 </div>
                                 <div>
                                     <p className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">{stat.label}</p>
-                                    <h3 className="text-3xl font-black text-slate-900 dark:text-white mt-1 tracking-tight">
+                                    <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mt-1 tracking-tight">
                                         {stat.isPercent ? `${Math.round(stat.value)}%` : `₹${stat.value.toLocaleString()}`}
                                     </h3>
                                 </div>
@@ -58,13 +58,13 @@ export function Dashboard() {
                 ))}
             </motion.div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <Card title="Cash Flow Dynamics" className="lg:col-span-2 min-h-[450px]" delay={0.4}>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+                <Card title="Cash Flow Dynamics" className="lg:col-span-2 min-h-[350px] md:min-h-[450px]" delay={0.4}>
                     <div className="h-full pt-4">
                         <RevenueChart transactions={transactions} />
                     </div>
                 </Card>
-                <Card title="Recent Activity" className="min-h-[450px]" delay={0.5}>
+                <Card title="Recent Activity" className="min-h-[400px] md:min-h-[450px]" delay={0.5}>
                     <RecentTransactionsList transactions={transactions.slice(0, 6)} />
                 </Card>
             </div>

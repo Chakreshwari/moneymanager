@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { Transaction } from '../types';
+import { useAuth } from './AuthContext';
 
 interface TransactionContextType {
     transactions: Transaction[];
@@ -14,19 +15,33 @@ interface TransactionContextType {
 const TransactionContext = createContext<TransactionContextType | undefined>(undefined);
 
 export function TransactionProvider({ children }: { children: React.ReactNode }) {
-    const [transactions, setTransactions] = useState<Transaction[]>(() => {
-        const saved = localStorage.getItem('transactions');
-        return saved ? JSON.parse(saved) : [];
-    });
+    const { user } = useAuth();
+    const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
-        localStorage.setItem('transactions', JSON.stringify(transactions));
-    }, [transactions]);
+        setIsLoaded(false);
+        if (user) {
+            const saved = localStorage.getItem(`transactions_${user.id}`);
+            setTransactions(saved ? JSON.parse(saved) : []);
+            setIsLoaded(true);
+        } else {
+            setTransactions([]);
+        }
+    }, [user]);
+
+    useEffect(() => {
+        if (user && isLoaded) {
+            localStorage.setItem(`transactions_${user.id}`, JSON.stringify(transactions));
+        }
+    }, [transactions, user, isLoaded]);
 
     const addTransaction = (data: Omit<Transaction, 'id'>) => {
+        if (!user) return;
         const newTransaction: Transaction = {
             ...data,
             id: crypto.randomUUID(),
+            userId: user.id
         };
         setTransactions(prev => [newTransaction, ...prev]);
     };
