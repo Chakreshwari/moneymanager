@@ -15,6 +15,8 @@ interface TransactionModalProps {
 
 export function TransactionModal({ isOpen, onClose, onSubmit, initialData, title }: TransactionModalProps) {
     const { user } = useAuth();
+
+    // Initialize state with userId to satisfy Omit<Transaction, 'id'>
     const [formData, setFormData] = useState<Omit<Transaction, 'id'>>({
         userId: user?.id || '',
         title: '',
@@ -25,24 +27,26 @@ export function TransactionModal({ isOpen, onClose, onSubmit, initialData, title
     });
 
     useEffect(() => {
-        if (initialData) {
-            setFormData({
-                userId: initialData.userId,
-                title: initialData.title,
-                amount: initialData.amount,
-                category: initialData.category,
-                date: initialData.date,
-                type: initialData.type
-            });
-        } else {
-            setFormData({
-                userId: user?.id || '',
-                title: '',
-                amount: 0,
-                category: '',
-                date: new Date().toISOString().split('T')[0],
-                type: 'expense'
-            });
+        if (isOpen) {
+            if (initialData) {
+                setFormData({
+                    userId: initialData.userId,
+                    title: initialData.title,
+                    amount: initialData.amount,
+                    category: initialData.category,
+                    date: initialData.date,
+                    type: initialData.type
+                });
+            } else {
+                setFormData({
+                    userId: user?.id || '',
+                    title: '',
+                    amount: 0,
+                    category: '',
+                    date: new Date().toISOString().split('T')[0],
+                    type: 'expense'
+                });
+            }
         }
     }, [initialData, isOpen, user]);
 
